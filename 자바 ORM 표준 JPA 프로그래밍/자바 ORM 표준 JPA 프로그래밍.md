@@ -108,3 +108,44 @@ Member member = jpa.find(Member.class, memberId);
 Order order = member.getOrder();
 order.getOrderDate(); // Order를 사용하는 시점에 SELECT ORDER SQL
 ~~~
+* Member를 사용할 때마다 Order를 함께 사용하면, 이렇게 한 테이블씩 조회하는 것보다는
+Member를 조회하는 시점에 SQL 조인을 사용해서 Member와 Order를 함께 조회하는 것이 효과적이다.
+* JPA는 연관된 객체를 즉시 함께 조회할지 아니면 실제 사용되는 시점에 지연해서 조회할지를
+간단한 설정으로 정의할 수 있다.
+
+### 1.2.4 비교
+* 데이터베이스는 기본 키의 값으로 각 로우를 구분한다.
+* 반면에 객체는 동일성 비교와 동등성 비교라는 두 가지 비교 방법이 있다.
+
+> 동일성 비교는 == 비교다. 객체 인스턴스의 주소 값을 비교한다.
+> 동등성 비교는 euqals() 메소드를 사용해서 객체 내부의 값을 비교한다.
+
+~~~java
+String memberId = "1";
+Member member1 = memberDAO.getMembers(memberId);
+Member member2 = memberDAO.getMembers(memberId);
+
+member1 == member2 // 다르다.
+~~~
+
+#### JPA와 비교
+* JPA는 같은 트랜잭션일 때 같은 객체가 조회되는 것을 보장한다.
+~~~java
+String memberId = "100";
+Member member1 = jps.find(Member.class, memberId);
+Member member2 = jpa.find(Member.class, memberId);
+
+member1 == member2; //같다
+~~~
+
+### 1.2.5 정리
+* 객체 모델과 관계형 데이터베이스 모델은 지향하는 패러다임이 서로 다르다.
+* 이런 패러다임 차이를 극복하려고 갓발자님들이 너무 많은 시간과 코드를 소비한다.
+* 이런 것들을 해결하기 위한 결과물이 JPA다.
+
+
+## 1.3 JPA란 무엇인가?
+* JPA는 자바 진영의 ORM 기술 표준이다.
+* JPA는 애플리케이션과 JDBC 사이에서 동작한다.
+* ORM(object-relational mapping)은 이름 그대로 객체와 관계형 데이터베이스를 매핑한다는 뜻이다.
+* ORM 프레임워크는 객체와 테이블을 매핑해서 패러다임의 불일치 문제를 개발자 대신 해결해준다.
